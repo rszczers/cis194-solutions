@@ -68,7 +68,6 @@ compile :: String -> Maybe StackVM.Program
 compile s = parseExp lit add mul s :: Maybe StackVM.Program
 
 --Ex. 6
-
 class HasVars a where
     var :: String -> a
 
@@ -89,6 +88,12 @@ instance HasVars VarExprT where
 instance HasVars (M.Map String Integer -> Maybe Integer) where
     var s = M.lookup s
 
--- instance Expr (M.Map String Integer -> Maybe Integer) where
---    lit n = \_ -> Just n
---    add a b = \d -> 
+instance Expr (M.Map String Integer -> Maybe Integer) where
+    lit n = \_ -> Just n
+    add a b = \d -> (+) <$> (a d) <*> (b d)
+    mul a b = \d -> (*) <$> (a d) <*> (b d)
+
+withVars :: [(String, Integer)]
+         -> (M.Map String Integer -> Maybe Integer)
+         -> Maybe Integer
+withVars vs exp = exp $ M.fromList vs
