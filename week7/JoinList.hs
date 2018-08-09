@@ -19,9 +19,9 @@ tag (Append m _ _) = m
 indexJ :: (Sized b, Monoid b) =>
           Int -> JoinList b a -> Maybe a
 indexJ _ Empty = Nothing
-indexJ 0 (Single _ a) = Just a
-indexJ 0 (Append _ (Single _ a) _) = Just a
-indexJ 1 (Append _ _ (Single _ b)) = Just b
+indexJ 1 (Single _ a) = Just a
+indexJ 1 (Append _ (Single _ a) _) = Just a
+indexJ 2 (Append _ _ (Single _ b)) = Just b
 indexJ n t@(Append rS l r)
     | n > jlSize t = Nothing
     | n <= jlSize l = indexJ n l
