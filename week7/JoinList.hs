@@ -1,5 +1,8 @@
+module JoinList where
+
 import Data.Monoid
 import Sized
+import Scrabble
 
 -- Ex. 1
 data JoinList m a = Empty
@@ -42,6 +45,23 @@ dropJ n t@(Append m l r)
           jlSize Empty = 0
           jlSize (Single _ _) = 1
 
-
+takeJ :: (Sized b, Monoid b) =>
+         Int -> JoinList b a -> JoinList b a
+takeJ _ Empty = Empty
+takeJ 0 jl = Empty
+takeJ _ (Single m a) = Single m a
+takeJ n t@(Append m l r)
+    | n >= jlSize t = t
+    | n <= jlSize l = takeJ n l
+    | n > jlSize l  = l +++ (takeJ (n - jlSize l) r)
+    where jlSize (Append m _ _) = getSize $ size m
+          jlSize Empty = 0
+          jlSize (Single _ _) = 1
 
 test = Append (Size 7) (Append (Size 6) (Single (Size 1) 'y') (Append (Size 2) (Single (Size 1) 'e') (Single (Size 1) 'a'))) (Single (Size 1) 'h')
+
+-- Ex 3. Part II
+scoreLine :: String -> JoinList Score String
+scoreLine s = foldr (\x xs -> Append (sL (words s))
+              (Single (scoreString x) x) xs) Empty (words s)
+    where sL = foldr (\s ss -> scoreString s <> ss) (Score 0)
