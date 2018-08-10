@@ -1,6 +1,8 @@
+{-# LANGUAGE FlexibleInstances #-}
 module JoinList where
 
 import Data.Monoid
+import Buffer
 import Sized
 import Scrabble
 
@@ -65,3 +67,23 @@ scoreLine :: String -> JoinList Score String
 scoreLine s = foldr (\x xs -> Append (sL (words s))
               (Single (scoreString x) x) xs) Empty (words s)
     where sL = foldr (\s ss -> scoreString s <> ss) (Score 0)
+
+-- Ex 4.
+instance Buffer (JoinList (Score, Size) String) where
+        toString Empty = []
+        toString (Single _ s) = s
+        toString (Append _ l r) = toString l ++ toString r
+
+        fromString = go . lines 
+            where go [] = Empty
+                  go [s] = Single (scoreString s, Size 1) s
+                  go x = go (take ((length x) `div` 2) x) +++
+                         go (drop ((length x) `div` 2) x)
+
+        line = indexJ
+        replaceLine n new jl = takeJ n jl +++
+                               fromString new +++
+                               dropJ (n + 1) jl
+        numLines = getSize . snd . tag
+        value = getScore . fst . tag
+            where getScore (Score n) = n
