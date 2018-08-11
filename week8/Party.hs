@@ -22,20 +22,24 @@ moreFun l1 l2 | l1 < l2   = l2
 --}
 --      p
 --      a
---    g/ \g 
+--    g/ \g
 --    /   \
 --   a1   a2
 --  g|
---   | 
+--   |
 --  a11
 --
 
-treeFold :: (a -> a -> a) -> a -> Tree a -> a
-treeFold g p (Node a []) = a
-treeFold g p (Node a fs) = 
-    foldr g a $ (\t -> treeFold g (rootLabel t) t) <$> fs
+treeFold :: (a -> b -> b) -> b -> Tree a -> b
+treeFold g b (Node a []) = g a b
+treeFold g b (Node a fs) = g a $ foldr (flip (treeFold g)) b fs
+
+treeFold' :: (b -> a -> b) -> b -> Tree a -> b
+treeFold' g b (Node a []) = g b a
+treeFold' g b (Node a fs) = g (foldl (treeFold' g) b fs) a
 
 test1 = (Node 2 [(Node 5 [(Node 6 []), (Node 7 [])]), (Node 8 [])])
 test2 = Node "Jeden" [(Node "Dwa" [Node "Osiemnaście" [], Node "Dziewiętnaście" []]), (Node "Trzy" [])]
+
 
 
