@@ -20,7 +20,7 @@ moreFun l1 l2 | l1 < l2   = l2
 --      rootLabel :: a, -- label value
 --      subForest :: [Tree a] -- zero or more child trees
 --}
---      p
+--       
 --      a
 --    g/ \g
 --    /   \
@@ -41,5 +41,7 @@ treeFold' g b (Node a fs) = g (foldl (treeFold' g) b fs) a
 test1 = (Node 2 [(Node 5 [(Node 6 []), (Node 7 [])]), (Node 8 [])])
 test2 = Node "Jeden" [(Node "Dwa" [Node "Osiemnaście" [], Node "Dziewiętnaście" []]), (Node "Trzy" [])]
 
+-- Ex. 3
 
+combineGLs :: Employee -> [GuestList] -> GuestList
 
